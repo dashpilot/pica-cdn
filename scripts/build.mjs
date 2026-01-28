@@ -1,5 +1,5 @@
 import esbuild from "esbuild";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const isWatch = process.argv.includes("--watch");
@@ -42,7 +42,22 @@ const builds = [
 if (isWatch) {
   const ctxs = await Promise.all(builds.map((b) => esbuild.context(b)));
   await Promise.all(ctxs.map((c) => c.watch()));
+  await writeDemoHtml();
   console.log("Watching…");
 } else {
   await Promise.all(builds.map((b) => esbuild.build(b)));
+  await writeDemoHtml();
+}
+
+async function writeDemoHtml() {
+  // Make dist/ deployable as a static site (e.g. on Vercel) by
+  // copying root index.html to dist/index.html and rewriting the script path.
+  const rootHtmlPath = fileURLToPath(new URL("../index.html", import.meta.url));
+  const outHtmlPath = fileURLToPath(new URL("../dist/index.html", import.meta.url));
+  const html = await readFile(rootHtmlPath, "utf8");
+
+  // Root demo references ./dist/... because it’s served from repo root.
+  // In dist/ we want to reference bundles next to the HTML file.
+  const rewritten = html.replaceAll("./dist/", "./");
+  await writeFile(outHtmlPath, rewritten, "utf8");
 }

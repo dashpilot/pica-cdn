@@ -46,3 +46,10 @@ Example:
 npx serve .
 ```
 
+## Vercel
+
+This repo includes `vercel.json` and the build writes `dist/index.html`, so Vercel can deploy it as a static site.
+
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+
