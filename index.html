@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pica CDN build demo</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 24px; }
+      canvas, img { border: 1px solid #ddd; }
+      .row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+      .col { display: grid; gap: 8px; }
+      small { color: #555; }
+    </style>
+  </head>
+  <body>
+    <h1>pica CDN build demo</h1>
+    <p><small>Pick an image, then resize with pica in the browser.</small></p>
+
+    <input id="file" type="file" accept="image/*" />
+
+    <div class="row" style="margin-top: 16px;">
+      <div class="col">
+        <div><strong>Input</strong></div>
+        <img id="inImg" alt="" />
+      </div>
+      <div class="col">
+        <div><strong>Output canvas</strong></div>
+        <canvas id="out"></canvas>
+      </div>
+    </div>
+
+    <!-- Option A: classic <script> (globalThis.pica) -->
+    <script src="./dist/pica.iife.min.js"></script>
+    <script>
+      const fileEl = document.getElementById("file");
+      const inImg = document.getElementById("inImg");
+      const out = document.getElementById("out");
+
+      fileEl.addEventListener("change", async () => {
+        const f = fileEl.files?.[0];
+        if (!f) return;
+
+        inImg.src = URL.createObjectURL(f);
+        await inImg.decode();
+
+        const targetW = 640;
+        const scale = targetW / inImg.naturalWidth;
+        out.width = targetW;
+        out.height = Math.round(inImg.naturalHeight * scale);
+
+        // globalThis.pica is provided by the IIFE bundle
+        const p = window.pica();
+        await p.resize(inImg, out);
+      });
+    </script>
+  </body>
+</html>
+
