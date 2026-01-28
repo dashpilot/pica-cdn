@@ -20,7 +20,7 @@ Outputs:
 ### Classic `<script>` (global)
 
 ```html
-<script src="https://your-cdn.example/pica.iife.min.js"></script>
+<script src="https://pica-cdn.vercel.app/pica.iife.min.js"></script>
 <script>
   const p = window.pica();
   // await p.resize(from, to)
@@ -31,7 +31,7 @@ Outputs:
 
 ```html
 <script type="module">
-  import pica from "https://your-cdn.example/pica.esm.js";
+  import pica from "https://pica-cdn.vercel.app/pica.esm.js";
   const p = pica();
 </script>
 ```
